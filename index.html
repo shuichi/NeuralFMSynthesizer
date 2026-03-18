@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>FM Workstation Prototype</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <h1>FM Workstation Prototype</h1>
+        <p>AudioWorkletベース 6オペ FM + ピアノロール + Web MIDI</p>
+      </div>
+      <div class="transport controls-row">
+        <button id="startAudioBtn">Start Audio</button>
+        <button id="playBtn">Play</button>
+        <button id="stopBtn">Stop</button>
+        <button id="panicBtn" class="danger">Panic</button>
+        <button id="initPatchBtn">Init Patch</button>
+        <button id="saveProjectBtn">Save Project</button>
+        <button id="loadProjectBtn">Load Project</button>
+        <button id="midiBtn">Connect MIDI</button>
+        <input id="projectFileInput" type="file" accept="application/json" hidden />
+      </div>
+    </header>
+
+    <section class="global-strip panel">
+      <div class="controls-row wrap">
+        <label>BPM <input id="bpmInput" type="number" min="40" max="240" step="1" value="120" /></label>
+        <label>Bars <input id="barsInput" type="number" min="1" max="8" step="1" value="2" /></label>
+        <label>Swing % <input id="swingInput" type="range" min="0" max="50" step="1" value="0" /><span id="swingValue">0%</span></label>
+        <label>Master <input id="masterInput" type="range" min="0" max="1" step="0.01" value="0.75" /><span id="masterValue">0.75</span></label>
+        <label>Cutoff <input id="cutoffInput" type="range" min="120" max="18000" step="1" value="14000" /><span id="cutoffValue">14000 Hz</span></label>
+        <label>Reso <input id="resoInput" type="range" min="0.2" max="20" step="0.1" value="0.8" /><span id="resoValue">0.8</span></label>
+        <label>Delay Mix <input id="delayMixInput" type="range" min="0" max="0.8" step="0.01" value="0.18" /><span id="delayMixValue">0.18</span></label>
+        <label>Delay Time <input id="delayTimeInput" type="range" min="0.05" max="0.8" step="0.01" value="0.28" /><span id="delayTimeValue">0.28 s</span></label>
+      </div>
+      <div class="status-line">
+        <div><strong>Status:</strong> <span id="statusText">未初期化</span></div>
+        <div><strong>Latency:</strong> <span id="latencyText">-</span></div>
+        <div><strong>Transport:</strong> <span id="transportText">Stopped</span></div>
+      </div>
+    </section>
+
+    <main class="workspace">
+      <section class="panel sequencer-panel">
+        <div class="panel-header">
+          <div>
+            <h2>Sequencer</h2>
+            <p>空きセルでドラッグしてノート作成。ノートはドラッグ移動 / 右端ドラッグで長さ変更 / 右クリック削除。</p>
+          </div>
+          <div class="controls-row small-gap">
+            <button id="clearPatternBtn">Clear Pattern</button>
+            <button id="demoPatternBtn">Load Demo Pattern</button>
+          </div>
+        </div>
+        <div class="sequencer-toolbar controls-row wrap compact">
+          <label>Sound Preset
+            <select id="soundPresetSelect"></select>
+          </label>
+          <label>Algorithm
+            <select id="algorithmSelect"></select>
+          </label>
+          <label>Octave Preview
+            <select id="octaveSelect">
+              <option value="2">C2</option>
+              <option value="3" selected>C3</option>
+              <option value="4">C4</option>
+              <option value="5">C5</option>
+            </select>
+          </label>
+          <div class="hint">PC keyboard: A W S E D F T G Y H U J K</div>
+        </div>
+
+        <div class="roll-layout">
+          <div id="noteLabels" class="note-labels"></div>
+          <div id="rollViewport" class="roll-viewport">
+            <div id="stepHeader" class="step-header"></div>
+            <div id="rollContent" class="roll-content">
+              <div id="gridLayer" class="grid-layer"></div>
+              <div id="barLayer" class="bar-layer"></div>
+              <div id="noteLayer" class="note-layer"></div>
+              <div id="playhead" class="playhead"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="note-inspector">
+          <h3>Selected Note</h3>
+          <div class="controls-row wrap compact">
+            <label>Step <input id="noteStepInput" type="number" min="0" max="127" step="1" /></label>
+            <label>Length <input id="noteLengthInput" type="number" min="1" max="64" step="1" /></label>
+            <label>Velocity <input id="noteVelocityInput" type="range" min="0.05" max="1" step="0.01" /><span id="noteVelocityValue">-</span></label>
+            <label>Pitch <input id="notePitchInput" type="number" min="24" max="96" step="1" /></label>
+            <button id="deleteNoteBtn" class="danger">Delete Note</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <section class="panel patch-panel">
+          <div class="panel-header">
+            <div>
+              <h2>Patch Editor</h2>
+              <p>6オペレータ、アルゴリズム固定配線 + 各オペ出力 / フィードバック調整。</p>
+            </div>
+          </div>
+          <div id="algorithmSummary" class="algorithm-summary"></div>
+          <div id="operatorsContainer" class="operators-grid"></div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
