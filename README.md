@@ -36,11 +36,11 @@ python3 -m http.server 8000
 - `styles.css` スタイル
 - `app.js` UI / transport / scheduler / MIDI
 - `scheduler-worker.js` 先読み tick
-- `fm-synth-worklet.js` FM 音源本体
+- `fm-core.js` FM 音源のコア DSP
+- `fm-synth-worklet.js` AudioWorklet アダプタ
 - `FM_WORKSTATION_DESIGN.md` 設計メモ
 
 ## 注意
 
 - ブラウザーや権限設定によって Web MIDI が使えないことがあります。
 - AudioWorklet を使うので、`file://` 直開きではなくローカルサーバー配信を推奨します。
-
